@@ -1,0 +1,139 @@
+#ifndef FRAME
+#define FRAME
+
+static const unsigned char PROGMEM EmptyBatteryFrame[] =
+{ B11111111, B11111100,
+  B10000000, B00000100,
+  B10000000, B00000111,
+  B10000000, B00000111,
+  B10000000, B00000111,
+  B10000000, B00000100,
+  B11111111, B11111100,
+};
+
+static const unsigned char PROGMEM BatteryLineFrame[] =
+{ B11111111, B11111111,
+  B11111111, B11111111,
+  B11111111, B11111111,
+};
+
+
+static String Screen[NUMBER_OF_SCREENS][MAX_MENU_LINE] = {
+  {
+    "Time lapse",
+    "",
+    "Count: ",
+    "Time interval: ",
+    "Exposure: ",
+    "Duration: ",
+    "",
+    "Device:        start",
+    "test1"
+  },
+  {
+    "Triggered shoot",
+    "",
+    "bla: ",
+    "bli: ",
+    "blou: ",
+    "blu: ",
+    "",
+    "Device:        start",
+    "test1",
+    "test1",
+    "test1"
+  },
+  {
+    "Settings",
+    "",
+    "Screen intensity: ",
+    "Auto shutdown: ",
+    "Exposure: ",
+    "Duration: ",
+    "",
+    "Device:        start",
+  }
+};
+
+static String Unit[NUMBER_OF_SCREENS][MAX_MENU_LINE] = {
+  {
+    "",
+    "",
+    "S",
+    "s",
+    "s",
+    "min",
+    "",
+    "",
+    ""
+  },
+  {
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+  },
+  {
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+  },
+};
+
+static uint16_t Value[NUMBER_OF_SCREENS][MAX_MENU_LINE] = {
+  {
+    0,
+    0,
+    100,
+    3,
+    1,
+    10,
+    0,
+    0,
+    0
+  },
+  {
+    0,
+    0,
+    100,
+    3,
+    1,
+    10,
+    0,
+    0,
+    0
+  },
+  {
+    0,
+    0,
+    100,
+    3,
+    1,
+    10,
+    0,
+    0,
+    0
+  },
+};
+
+
+static uint8_t ScreenNumberOfLine[NUMBER_OF_SCREENS] = {7, 9, 6};
+
+typedef enum {
+  TIME_LAPSE,
+  TRIGGERED_SHOOT,
+  SETTINGS
+} screenName;
+
+#endif
