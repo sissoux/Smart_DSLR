@@ -10,9 +10,9 @@
 #define LOW_BATTERY_V_THRESH 599      // 3.2V
 #define NOMINAL_BATTERY_V 692         // 3.2V
 #define CHARGED_BATTERY_V 785         // 3.2V
-#define VALUE_AT_FIVE_V 935.0
+#define VALUE_AT_FIVE_V 3413.0
 #define TO_VOLTS(a) (float)(a*5)/VALUE_AT_FIVE_V
-#define BATTERY_CHECK_RATE 10000
+#define BATTERY_CHECK_RATE 100
 
 /**
  * Click management configuration

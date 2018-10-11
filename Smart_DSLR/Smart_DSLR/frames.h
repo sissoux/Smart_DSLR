@@ -25,10 +25,9 @@ static String Screen[NUMBER_OF_SCREENS][MAX_MENU_LINE] = {
     "Count: ",
     "Time interval: ",
     "Exposure: ",
-    "Duration: ",
+    "",
     "",
     "Device:        start",
-    "test1"
   },
   {
     "Triggered shoot",
@@ -59,10 +58,9 @@ static String Unit[NUMBER_OF_SCREENS][MAX_MENU_LINE] = {
   {
     "",
     "",
-    "S",
+    "",
     "s",
     "s",
-    "min",
     "",
     "",
     ""
@@ -96,9 +94,8 @@ static uint16_t Value[NUMBER_OF_SCREENS][MAX_MENU_LINE] = {
     0,
     0,
     100,
-    3,
     1,
-    10,
+    60,
     0,
     0,
     0
@@ -128,7 +125,7 @@ static uint16_t Value[NUMBER_OF_SCREENS][MAX_MENU_LINE] = {
 };
 
 
-static uint8_t ScreenNumberOfLine[NUMBER_OF_SCREENS] = {7, 9, 6};
+static uint8_t ScreenNumberOfLine[NUMBER_OF_SCREENS] = {6, 9, 6};
 
 typedef enum {
   TIME_LAPSE,

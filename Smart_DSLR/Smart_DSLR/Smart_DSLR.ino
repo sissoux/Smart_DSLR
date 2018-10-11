@@ -16,6 +16,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include "frames.h"
+#include <ADC.h>
 
 Encoder myEnc(ENC_A_PIN, ENC_B_PIN);
 
@@ -47,6 +48,9 @@ elapsedMillis BlinkTimer = 0;
 uint8_t Blink = 0;
 uint8_t BatBlinkCounter = 0;
 
+
+ADC *adc = new ADC(); // adc object;
+
 typedef enum {
   UP,
   DOWN,
@@ -65,6 +69,17 @@ void setup()
   init_ISR();
   init_Display();
   LED_Sequence();
+  pinMode(BAT_VOLTAGE_PIN, INPUT);
+  //adc->setReference(ADC_REF_1V2, ADC_0); // change all 3.3 to 1.2 if you change the reference to 1V2
+
+  adc->setAveraging(4); // set number of averages
+  adc->setResolution(12); // set bits of resolution
+
+  // it can be ADC_VERY_LOW_SPEED, ADC_LOW_SPEED, ADC_MED_SPEED, ADC_HIGH_SPEED_16BITS, ADC_HIGH_SPEED or ADC_VERY_HIGH_SPEED
+  // see the documentation for more information
+  //adc->setConversionSpeed(ADC_LOW_SPEED); // change the conversion speed
+  // it can be ADC_VERY_LOW_SPEED, ADC_LOW_SPEED, ADC_MED_SPEED, ADC_HIGH_SPEED or ADC_VERY_HIGH_SPEED
+  //adc->setSamplingSpeed(ADC_LOW_SPEED); // change the sampling speed
 }
 
 void loop()
@@ -117,6 +132,8 @@ void navigation()
       {
         if (!ItemSelected)
         {
+          if (ActiveLine == 6)
+            startTimeLapse();
           ItemSelected = ActiveLine + 1;
         }
         else
@@ -169,6 +186,60 @@ void navigation()
   }
 }
 
+void startTimeLapse()
+{
+  elapsedMillis LocalTimer = 0;
+  uint16_t counter = 1;
+
+  while (counter < Value[ActiveScreen][2])
+  {
+    digitalWrite(DSLR_FOCUS_PIN, HIGH);
+    digitalWrite(DSLR_SHUTTER_PIN, HIGH);
+    digitalWrite(10, HIGH);
+    digitalWrite(11, LOW);
+    while (LocalTimer < Value[ActiveScreen][4] * 1000)
+    {
+      display.clearDisplay();
+      display.setTextSize(1);
+      display.setTextColor(WHITE);
+      display.setCursor(0, 0);
+
+      display.println("INTERVAL SHOOTING ");
+      display.println(" ");
+
+      display.print("Shoot ");
+      display.print(counter);
+      display.print(" on ");
+      display.println(Value[ActiveScreen][2]);
+      display.print("Time ");
+      display.print(LocalTimer / 1000);
+      display.print(" on ");
+      display.println(Value[ActiveScreen][4]);
+      display.display();
+    }
+    LocalTimer = 0;
+    digitalWrite(DSLR_FOCUS_PIN, LOW);
+    digitalWrite(DSLR_SHUTTER_PIN, LOW);
+    digitalWrite(10, LOW);
+    digitalWrite(11, HIGH);
+    while (LocalTimer < Value[ActiveScreen][3] * 1000)
+    {
+      display.clearDisplay();
+      display.setTextSize(1);
+      display.setTextColor(WHITE);
+      display.setCursor(0, 0);
+
+      display.println("INTERVAL SHOOTING ");
+      display.println(" ");
+
+      display.print("Waiting ");
+      display.display();
+    }
+    LocalTimer = 0;
+    counter++;
+  }
+}
+
 /**
    \fn void displayManagement()
    \brief This function organizes all OLED screen update.
@@ -193,13 +264,16 @@ void displayManagement()
     {
       display.print(" ");
     }
-    display.print(Value[ActiveScreen][line]);
+    if ( Value[ActiveScreen][line] != 0)display.print(Value[ActiveScreen][line]);
     display.println(Unit[ActiveScreen][line]);
   }
 
 
   batteryLevelDisplay(ChargerStatus, BatteryLevel, Blink);
   //display.drawFastHLine(56, 8*3-1, 7, BatBlink);
+
+  //display.println(BatteryLevel);
+  //display.println(TO_VOLTS(BatteryLevel));
   display.display();
 }
 
@@ -262,7 +336,13 @@ void batteryLevelDisplay(chargeState Status, uint16_t Vbat, uint8_t BatBlink)
 */
 void chargeCheck(chargeState *Status, uint16_t *Vbat)
 {
-  *Vbat = analogRead(BAT_VOLTAGE_PIN);
+
+  *Vbat = adc->analogRead(BAT_VOLTAGE_PIN);
+  Serial.print("VBAT = ");
+  Serial.print(*Vbat);
+  Serial.print(" = ");
+  Serial.print(TO_VOLTS(*Vbat));
+  Serial.println("V");
   *Status =  (chargeState)(digitalRead(BAT_STAT1_PIN) + digitalRead(BAT_STAT2_PIN) * 2);
 }
 
@@ -416,7 +496,7 @@ void init_Display()
   display.clearDisplay();
   display.drawBitmap(0, 0,  SmartDSLRRemote, 128, 64, 1);
   display.display();
-  delay(200);
+  delay(800);
   display.clearDisplay();
 
 
